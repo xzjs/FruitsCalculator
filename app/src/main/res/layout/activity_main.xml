@@ -61,8 +61,50 @@
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:columnCount="5">
+                    android:columnCount="6">
 
+                    <Button
+                        android:background="@mipmap/watermelon"
+                        android:text="西瓜\n2元/斤"
+                        android:textAlignment="center"
+                        android:textColor="#FFF"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:background="@mipmap/watermelon"
+                        android:text="西瓜\n2元/斤"
+                        android:textAlignment="center"
+                        android:textColor="#FFF"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:background="@mipmap/watermelon"
+                        android:text="西瓜\n2元/斤"
+                        android:textAlignment="center"
+                        android:textColor="#FFF"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:background="@mipmap/watermelon"
+                        android:text="西瓜\n2元/斤"
+                        android:textAlignment="center"
+                        android:textColor="#FFF"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:background="@mipmap/watermelon"
+                        android:text="西瓜\n2元/斤"
+                        android:textAlignment="center"
+                        android:textColor="#FFF"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:background="@mipmap/watermelon"
+                        android:text="西瓜\n2元/斤"
+                        android:textAlignment="center"
+                        android:textColor="#FFF"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
                     <Button
                         android:background="@mipmap/watermelon"
                         android:text="西瓜\n2元/斤"
