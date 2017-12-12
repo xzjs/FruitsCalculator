@@ -50,7 +50,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:onClick="takePhoto"
+                android:onClick="getPhoto"
                 android:text="拍照" />
 
             <Button
@@ -58,7 +58,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:onClick="choosePhoto"
+                android:onClick="getPhoto"
                 android:text="读取相册" />
         </LinearLayout>
 
