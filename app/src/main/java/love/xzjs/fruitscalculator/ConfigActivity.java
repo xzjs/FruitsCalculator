@@ -73,4 +73,8 @@ public class ConfigActivity extends AppCompatActivity implements AdapterView.OnI
         intent.putExtras(bundle);
         startActivity(intent);
     }
+
+    public void back(View view){
+        this.finish();
+    }
 }

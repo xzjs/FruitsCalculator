@@ -28,7 +28,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         app:srcCompat="@mipmap/config"
-                        android:background="#00000000"/>
+                        android:background="#00000000"
+                        android:onClick="config"/>
                     <ImageButton
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -40,14 +41,24 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="14">
+                android:layout_weight="14"
+                android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/process"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="hello\nworld"
-                    android:gravity="right"
-                    android:textSize="32dp"/>
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
+                    android:gravity="end"
+                    android:textSize="32sp"/>
+                <TextView
+                    android:id="@+id/result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textSize="32sp"
+                    android:text="0"/>
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -58,61 +69,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="9">
-                <GridLayout
+                <GridView
+                    android:id="@+id/grid"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:columnCount="6">
-
-                    <Button
-                        android:background="@mipmap/watermelon"
-                        android:text="西瓜\n2元/斤"
-                        android:textAlignment="center"
-                        android:textColor="#FFF"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-                    <Button
-                        android:background="@mipmap/watermelon"
-                        android:text="西瓜\n2元/斤"
-                        android:textAlignment="center"
-                        android:textColor="#FFF"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-                    <Button
-                        android:background="@mipmap/watermelon"
-                        android:text="西瓜\n2元/斤"
-                        android:textAlignment="center"
-                        android:textColor="#FFF"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-                    <Button
-                        android:background="@mipmap/watermelon"
-                        android:text="西瓜\n2元/斤"
-                        android:textAlignment="center"
-                        android:textColor="#FFF"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-                    <Button
-                        android:background="@mipmap/watermelon"
-                        android:text="西瓜\n2元/斤"
-                        android:textAlignment="center"
-                        android:textColor="#FFF"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-                    <Button
-                        android:background="@mipmap/watermelon"
-                        android:text="西瓜\n2元/斤"
-                        android:textAlignment="center"
-                        android:textColor="#FFF"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-                    <Button
-                        android:background="@mipmap/watermelon"
-                        android:text="西瓜\n2元/斤"
-                        android:textAlignment="center"
-                        android:textColor="#FFF"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
-                </GridLayout>
+                    android:stretchMode="spacingWidthUniform"
+                    android:numColumns="4"
+                    android:columnWidth="150dp">
+                </GridView>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
@@ -123,26 +87,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="C"
-                    android:textSize="32dp"/>
+                    android:text="@string/c"
+                    android:textSize="32sp"
+                    android:onClick="c"/>
+                <!--<Button-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:text="*"-->
+                    <!--android:textSize="32dp"/>-->
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="*"
-                    android:textSize="32dp"/>
+                    android:text="@string/add"
+                    android:textSize="32sp"
+                    android:onClick="add"/>
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="+"
-                    android:textSize="32dp"/>
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="="
-                    android:textSize="32dp"/>
+                    android:text="@string/equal"
+                    android:textSize="32sp"
+                    android:onClick="getResult"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
