@@ -3,12 +3,14 @@ package love.xzjs.fruitscalculator;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -38,6 +40,7 @@ public class ItemActivity extends AppCompatActivity {
     private Uri imageUri;
     private MyDBHelper myDBHelper;
     private SQLiteDatabase sqLiteDatabase;
+    private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,29 +53,31 @@ public class ItemActivity extends AppCompatActivity {
         price = findViewById(R.id.price);
 
         myDBHelper = new MyDBHelper(ItemActivity.this, "fruits.db", null, 1);
+
+        Bundle bundle = this.getIntent().getExtras();
+        id = bundle != null ? bundle.getInt("id") : 0;
+        if (id != 0) {
+            Fruit fruit = getFruit(id);
+            name.setText(fruit.getName());
+            price.setText(String.valueOf(fruit.getPrice()));
+            imageUri = Uri.parse(fruit.getImg());
+            imageView.setImageURI(imageUri);
+        }
     }
 
-//    public void takePhoto(View view) {
-//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_CALL_PHONE2);
-//        } else {
-//            File output = getOutput();
-//            imageUri = Uri.fromFile(output);
-//            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-//            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-//            startActivityForResult(intent, CROP_PHOTO);
-//        }
-//    }
-//
-//    public void choosePhoto(View view) {
-//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_CALL_PHONE2);
-//        } else {
-//            Intent intent = new Intent(Intent.ACTION_PICK);
-//            intent.setType("image/*");//相片类型
-//            startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
-//        }
-//    }
+    @Nullable
+    private Fruit getFruit(int id) {
+        SQLiteDatabase db = myDBHelper.getWritableDatabase();
+        Cursor cursor = db.query("fruits", null, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            double price = cursor.getDouble(cursor.getColumnIndex("price"));
+            String img = cursor.getString(cursor.getColumnIndex("img"));
+            return new Fruit(id, name, price, img);
+        }
+        cursor.close();
+        return null;
+    }
 
     public void getPhoto(View view) {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -99,44 +104,14 @@ public class ItemActivity extends AppCompatActivity {
     }
 
     public void onActivityResult(int req, int res, Intent data) {
-//        switch (req) {
-//            case CROP_PHOTO:
-//                if (res == RESULT_OK) {
-//                    try {
-//                        Bitmap bit = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-//                        imageView.setImageBitmap(bit);
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    Log.i("tag", "onActivityResult: 失败");
-//                }
-//                break;
-//            case REQUEST_CODE_PICK_IMAGE:
-//                if (res == RESULT_OK) {
-//                    try {
-//                        imageUri = data.getData();
-//                        Bitmap bit = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-//                        imageView.setImageBitmap(bit);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        Log.d("tag", e.getMessage());
-//                    }
-//                } else {
-//                    Log.i("liang", "失败");
-//                }
-//
-//                break;
-//
-//            default:
-//                break;
-//        }
         if (res == RESULT_OK) {
-            if (req == REQUEST_CODE_PICK_IMAGE) {
-                imageUri = data.getData();
-                saveImg(imageUri);
-            }
             try {
+                if (req == REQUEST_CODE_PICK_IMAGE) {
+                    imageUri = data.getData();
+                    File file = getOutput();
+                    saveImg(imageUri, file);
+                    imageUri = Uri.fromFile(file);
+                }
                 Bitmap bit = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
                 imageView.setImageBitmap(bit);
             } catch (FileNotFoundException e) {
@@ -147,23 +122,38 @@ public class ItemActivity extends AppCompatActivity {
 
     public void save(View view) {
         try {
-            sqLiteDatabase = myDBHelper.getWritableDatabase();
+            SQLiteDatabase db = myDBHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("name", name.getText().toString());
             values.put("price", price.getText().toString());
             values.put("img", imageUri.toString());
-            sqLiteDatabase.insert("fruits", null, values);
-
-            startActivity(new Intent(ItemActivity.this, ConfigActivity.class));
+            if (id == 0) {
+                db.insert("fruits", null, values);
+            } else {
+                db.update("fruits", values, "id=?", new String[]{String.valueOf(id)});
+            }
+            this.finish();
         } catch (Exception e) {
             Log.e("error", e.getMessage());
         }
     }
 
-    private boolean saveImg(Uri uri) {
+    public void cancel(View view) {
+        this.finish();
+    }
+
+    public void delete(View view) {
+        if (id != 0) {
+            SQLiteDatabase db = myDBHelper.getWritableDatabase();
+            db.delete("fruits", "id=?", new String[]{String.valueOf(id)});
+            finish();
+        }
+    }
+
+    private boolean saveImg(Uri uri, File file) {
         try {
             Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
-            FileOutputStream outputStream = new FileOutputStream(getOutput());
+            FileOutputStream outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
             outputStream.close();

@@ -2,20 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/img"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@mipmap/watermelon"
+        android:layout_centerInParent="true"/>
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="西瓜"
         android:layout_alignParentTop="true"
-        android:textSize="32sp"
+        android:textSize="16sp"
         android:textStyle="bold"/>
-    <ImageView
-        android:id="@+id/img"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@mipmap/watermelon"
-        android:layout_centerInParent="true"/>
     <TextView
         android:id="@+id/price"
         android:layout_width="wrap_content"
@@ -23,6 +24,6 @@
         android:text="20元/斤"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:textSize="32sp"
+        android:textSize="16sp"
         android:textStyle="bold"/>
 </RelativeLayout>

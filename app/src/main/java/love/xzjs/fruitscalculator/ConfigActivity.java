@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -16,9 +17,10 @@ import android.widget.SimpleAdapter;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ConfigActivity extends AppCompatActivity {
+public class ConfigActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     ImageButton addBtn;
+    ArrayList<Fruit> fruits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,7 @@ public class ConfigActivity extends AppCompatActivity {
         getDelegate().onStart();
 
         GridView gridView = findViewById(R.id.grid);
-        ArrayList<Fruit> fruits = new ArrayList<Fruit>();
+        fruits = new ArrayList<>();
 
         MyDBHelper myDBHelper = new MyDBHelper(ConfigActivity.this, "fruits.db", null, 1);
         SQLiteDatabase database = myDBHelper.getWritableDatabase();
@@ -58,7 +60,17 @@ public class ConfigActivity extends AppCompatActivity {
         }
         cursor.close();
 
+        FruitAdapter adapter=new FruitAdapter(fruits,this);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(this);
+    }
 
-//        SimpleAdapter adapter=new SimpleAdapter(this,fruits,R.layout.layout_item,)
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Intent intent=new Intent(ConfigActivity.this,ItemActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putInt("id", fruits.get(i).getId());
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

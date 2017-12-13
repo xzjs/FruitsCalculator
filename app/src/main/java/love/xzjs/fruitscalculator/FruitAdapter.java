@@ -3,6 +3,8 @@ package love.xzjs.fruitscalculator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -21,14 +24,16 @@ public class FruitAdapter extends BaseAdapter {
     private ArrayList<Fruit> fruits = new ArrayList<Fruit>();
     private Context context;
 
-    public FruitAdapter(ArrayList<Fruit> fruits,Context context) {
+    public FruitAdapter(ArrayList<Fruit> fruits, Context context) {
+        super();
+
         this.fruits = fruits;
-        this.context=context;
+        this.context = context;
     }
 
     @Override
     public int getCount() {
-        return  fruits.size();
+        return fruits.size();
     }
 
     @Override
@@ -43,18 +48,27 @@ public class FruitAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        if(view==null){
-            view= LayoutInflater.from(this.context).inflate(R.layout.layout_item,null);
-            view.setTag(this.getItem(i));
+        ViewHolder viewHolder = null;
+        if (view != null) {
+            viewHolder = (ViewHolder) view.getTag();
+        } else {
+            viewHolder = new ViewHolder();
+            view = LayoutInflater.from(this.context).inflate(R.layout.layout_item, null);
+            viewHolder.nameTextView = view.findViewById(R.id.name);
+            viewHolder.priceTextView = view.findViewById(R.id.price);
+            viewHolder.imageView = view.findViewById(R.id.img);
+            view.setTag(viewHolder);
         }
-        Fruit fruit=(Fruit)this.getItem(i);
-        TextView nameTextView= view.findViewById(R.id.name);
-        nameTextView.setText(fruit.getName());
-        TextView priceTextView=view.findViewById(R.id.price);
-        priceTextView.setText(Double.toString(fruit.getPrice()));
-        ImageView imageView=view.findViewById(R.id.img);
-//        Bitmap bit = BitmapFactory.decodeFile()
-//        imageView.setImageBitmap();
+        Fruit fruit = (Fruit) this.getItem(i);
+        viewHolder.nameTextView.setText(fruit.getName());
+        viewHolder.priceTextView.setText(fruit.getPrice() + "元/斤");
+        viewHolder.imageView.setImageURI(Uri.parse(fruit.getImg()));
+
         return view;
+    }
+
+    class ViewHolder {
+        public TextView nameTextView, priceTextView;
+        public ImageView imageView;
     }
 }
