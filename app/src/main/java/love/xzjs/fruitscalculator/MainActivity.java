@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final LayoutInflater inflater = this.getLayoutInflater();
+        LayoutInflater inflater = this.getLayoutInflater();
         View view_custom = inflater.inflate(R.layout.layout_dialog, null, false);
         builder.setView(view_custom);
         builder.setCancelable(false);
@@ -138,5 +138,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             sb.append(" ");
         }
         process.setText(sb);
+    }
+
+    public void showPayCode(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view_custom = inflater.inflate(R.layout.layout_pay, null, false);
+        builder.setView(view_custom);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
