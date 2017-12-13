@@ -33,31 +33,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GridView gridView = findViewById(R.id.grid);
         process = findViewById(R.id.process);
         result = findViewById(R.id.result);
         fruits = new ArrayList<>();
         showStr = new ArrayList<>();
         prices = new ArrayList<>();
-
-        MyDBHelper myDBHelper = new MyDBHelper(MainActivity.this, "fruits.db", null, 1);
-        SQLiteDatabase database = myDBHelper.getWritableDatabase();
-        Cursor cursor = database.query("fruits", null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                double price = cursor.getDouble(cursor.getColumnIndex("price"));
-                String img = cursor.getString(cursor.getColumnIndex("img"));
-                Log.i("img", "onStart: " + img);
-                fruits.add(new Fruit(id, name, price, img));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-
-        FruitAdapter adapter = new FruitAdapter(fruits, this);
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(this);
     }
 
     public void config(View view) {
@@ -147,5 +127,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.setView(view_custom);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getDelegate().onStart();
+
+        GridView gridView = findViewById(R.id.grid);
+        MyDBHelper myDBHelper = new MyDBHelper(MainActivity.this, "fruits.db", null, 1);
+        SQLiteDatabase database = myDBHelper.getWritableDatabase();
+        Cursor cursor = database.query("fruits", null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                double price = cursor.getDouble(cursor.getColumnIndex("price"));
+                String img = cursor.getString(cursor.getColumnIndex("img"));
+                Log.i("img", "onStart: " + img);
+                fruits.add(new Fruit(id, name, price, img));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        FruitAdapter adapter = new FruitAdapter(fruits, this);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(this);
     }
 }
