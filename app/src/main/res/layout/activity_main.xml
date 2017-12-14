@@ -90,12 +90,13 @@
                     android:text="@string/c"
                     android:textSize="32sp"
                     android:onClick="c"/>
-                <!--<Button-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="0dp"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:text="*"-->
-                    <!--android:textSize="32dp"/>-->
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="*"
+                    android:textSize="32sp"
+                    android:onClick="multiplication"/>
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
