@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ArrayList<String> _showStrings;
     private ArrayList<Account> _accounts;
     private View _view;
-    private String _symbol;
+    private String _symbol="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,15 +55,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (_symbol.equals("=")) {
+            clearAll();
+        }
         _account = new Account(_fruits.get(i), 1);
         if (_showStrings.size() == 0 || _showStrings.get(_showStrings.size() - 1).equals("+")) {
             _showStrings.add(_account.getFruit().getName());
             _accounts.add(_account);
         } else {
             _showStrings.set(_showStrings.size() - 1, _account.getFruit().getName());
-            _accounts.set(_accounts.size()-1,_account);
+            _accounts.set(_accounts.size() - 1, _account);
         }
         refreshShow();
+    }
+
+    private void clearAll() {
+        _showStrings.clear();
+        _accounts.clear();
+        _process.setText("");
+        _result.setText("");
+        _total = 0;
     }
 
     public void add(View view) {
@@ -79,11 +90,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      */
     public void c(View view) {
         if (_symbol.equals("=")) {
-            _showStrings.clear();
-            _accounts.clear();
-            _process.setText("");
-            _result.setText("");
-            _total = 0;
+            clearAll();
         } else {
             String s = _showStrings.remove(_showStrings.size() - 1);
             if (!s.equals("+")) {
@@ -167,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 refreshShow();
                 _accounts.get(_accounts.size() - 1).setNum(num);
                 _dialog.dismiss();
+                _text.setText("");
             }
         });
 
