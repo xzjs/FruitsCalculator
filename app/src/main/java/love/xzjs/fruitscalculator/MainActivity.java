@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ArrayList<String> _showStrings;
     private ArrayList<Account> _accounts;
     private View _view;
-    private String _symbol="";
+    private String _symbol = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         View view_custom = inflater.inflate(R.layout.layout_pay, null, false);
+        TextView price = view_custom.findViewById(R.id.priceText);
+        price.setText(String.valueOf(_total));
         builder.setView(view_custom);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onStart();
         getDelegate().onStart();
 
+        _fruits.clear();
         GridView gridView = findViewById(R.id.grid);
         MyDBHelper myDBHelper = new MyDBHelper(MainActivity.this, "_fruits.db", null, 1);
         SQLiteDatabase database = myDBHelper.getWritableDatabase();

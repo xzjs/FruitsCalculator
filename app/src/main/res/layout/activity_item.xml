@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="价格（元/斤）"
+            android:text="价格（元）"
             android:textSize="32sp" />
 
         <EditText
@@ -65,8 +65,7 @@
         <ImageView
             android:id="@+id/photo"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:src="@mipmap/watermelon" />
+            android:layout_height="150dp" />
 
         <Button
             android:layout_width="match_parent"

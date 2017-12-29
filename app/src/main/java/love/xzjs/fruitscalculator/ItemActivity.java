@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -30,17 +31,17 @@ import java.util.jar.Manifest;
 
 public class ItemActivity extends AppCompatActivity {
 
-    Button takePhotoBtn, choosePhotoBtn;
+    Button takePhotoBtn;
     TextView name, price;
     ImageView imageView;
     private static final int CROP_PHOTO = 2;
     private static final int REQUEST_CODE_PICK_IMAGE = 3;
-    private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 6;
     private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE2 = 7;
     private Uri imageUri;
     private MyDBHelper myDBHelper;
-    private SQLiteDatabase sqLiteDatabase;
     private int id;
+    private Bitmap bitmap = null;
+    private Fruit fruit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class ItemActivity extends AppCompatActivity {
         Bundle bundle = this.getIntent().getExtras();
         id = bundle != null ? bundle.getInt("id") : 0;
         if (id != 0) {
-            Fruit fruit = getFruit(id);
+            fruit = getFruit(id);
             name.setText(fruit.getName());
             price.setText(String.valueOf(fruit.getPrice()));
             imageUri = Uri.parse(fruit.getImg());
@@ -86,10 +87,7 @@ public class ItemActivity extends AppCompatActivity {
             Intent intent;
             switch (view.getId()) {
                 case R.id.take_photo:
-                    File output = getOutput();
-                    imageUri = Uri.fromFile(output);
                     intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                     startActivityForResult(intent, CROP_PHOTO);
                     break;
                 case R.id.choose_photo:
@@ -105,18 +103,18 @@ public class ItemActivity extends AppCompatActivity {
 
     public void onActivityResult(int req, int res, Intent data) {
         if (res == RESULT_OK) {
-            try {
-                if (req == REQUEST_CODE_PICK_IMAGE) {
-                    imageUri = data.getData();
-                    File file = getOutput();
-                    saveImg(imageUri, file);
-                    imageUri = Uri.fromFile(file);
+            if (req == REQUEST_CODE_PICK_IMAGE) {
+                imageUri = data.getData();
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                Bitmap bit = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                imageView.setImageBitmap(bit);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            } else {
+                Bundle bundle = data.getExtras();
+                bitmap = (Bitmap) bundle.get("data");
             }
+            imageView.setImageBitmap(bitmap);
         }
     }
 
@@ -126,7 +124,13 @@ public class ItemActivity extends AppCompatActivity {
             ContentValues values = new ContentValues();
             values.put("name", name.getText().toString());
             values.put("price", price.getText().toString());
-            values.put("img", imageUri.toString());
+            String path="";
+            if(bitmap!=null){
+                path = saveBitmap(compressBitmap(bitmap));
+            }else{
+                path=fruit.getImg();
+            }
+            values.put("img", path);
             if (id == 0) {
                 db.insert("fruits", null, values);
             } else {
@@ -150,22 +154,33 @@ public class ItemActivity extends AppCompatActivity {
         }
     }
 
-    private boolean saveImg(Uri uri, File file) {
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
-            FileOutputStream outputStream = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            outputStream.flush();
-            outputStream.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+    /**
+     * 压缩图片
+     *
+     * @param _bitmap 输入图像
+     * @return 输出图像
+     */
+    private Bitmap compressBitmap(Bitmap _bitmap) {
+        // 获取图片的宽和高
+        float width = _bitmap.getWidth();
+        float height = _bitmap.getHeight();
+        // 创建操作图片的matrix对象
+        Matrix matrix = new Matrix();
+        // 计算宽高缩放率
+        float scaleWidth = (150) / width;
+        float scaleHeight = scaleWidth;
+        // 缩放图片动作
+        matrix.postScale(scaleWidth, scaleHeight);
+        return Bitmap.createBitmap(_bitmap, 0, 0, (int) width, (int) height, matrix, true);
     }
 
-    @Nullable
-    private File getOutput() {
+    /**
+     * 保存图片
+     *
+     * @param _bitmap 输入图像
+     * @return 存储路径
+     */
+    private String saveBitmap(Bitmap _bitmap) {
         File file = new File(Environment.getExternalStorageDirectory(), "takePhoto");
         if (!file.exists()) {
             file.mkdir();
@@ -176,10 +191,14 @@ public class ItemActivity extends AppCompatActivity {
                 output.delete();
             }
             output.createNewFile();
-            return output;
+            FileOutputStream out = new FileOutputStream(output);
+            _bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+            return output.getPath();
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return "";
         }
     }
 }

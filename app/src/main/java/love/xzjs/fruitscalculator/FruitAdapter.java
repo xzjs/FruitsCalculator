@@ -61,9 +61,9 @@ public class FruitAdapter extends BaseAdapter {
         }
         Fruit fruit = (Fruit) this.getItem(i);
         viewHolder.nameTextView.setText(fruit.getName());
-        viewHolder.priceTextView.setText(fruit.getPrice() + "元/斤");
-        viewHolder.imageView.setImageURI(Uri.parse(fruit.getImg()));
-
+        viewHolder.priceTextView.setText(fruit.getPrice() + "元");
+        Bitmap bitmap=BitmapFactory.decodeFile(fruit.getImg());
+        viewHolder.imageView.setImageBitmap(bitmap);
         return view;
     }
 
