@@ -21,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login(View view) {
         EditText pwd = findViewById(R.id.pwd);
-        if (pwd.getText().toString().equals("123456")) {
+        if (pwd.getText().toString().equals("nwamtf124720")) {
             startActivity(new Intent(LoginActivity.this, ConfigActivity.class));
             this.finish();
         }
