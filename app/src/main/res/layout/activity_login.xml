@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPassword"
-                android:textAlignment="center"/>
+                android:textAlignment="center" />
 
             <Button
                 android:id="@+id/loginBtn"

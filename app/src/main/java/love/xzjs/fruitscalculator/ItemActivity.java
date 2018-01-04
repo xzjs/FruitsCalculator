@@ -1,20 +1,21 @@
 package love.xzjs.fruitscalculator;
 
+import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,17 +23,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.jar.Manifest;
 
 public class ItemActivity extends AppCompatActivity {
 
     Button takePhotoBtn;
-    TextView name, price;
+    TextView nameText, priceText;
     ImageView imageView;
     private static final int CROP_PHOTO = 2;
     private static final int REQUEST_CODE_PICK_IMAGE = 3;
@@ -50,8 +50,8 @@ public class ItemActivity extends AppCompatActivity {
 
         takePhotoBtn = findViewById(R.id.take_photo);
         imageView = findViewById(R.id.photo);
-        name = findViewById(R.id.name);
-        price = findViewById(R.id.price);
+        nameText = findViewById(R.id.name);
+        priceText = findViewById(R.id.price);
 
         myDBHelper = new MyDBHelper(ItemActivity.this, "fruits.db", null, 1);
 
@@ -59,8 +59,8 @@ public class ItemActivity extends AppCompatActivity {
         id = bundle != null ? bundle.getInt("id") : 0;
         if (id != 0) {
             fruit = getFruit(id);
-            name.setText(fruit.getName());
-            price.setText(String.valueOf(fruit.getPrice()));
+            nameText.setText(fruit.getName());
+            priceText.setText(String.valueOf(fruit.getPrice()));
             imageUri = Uri.parse(fruit.getImg());
             imageView.setImageURI(imageUri);
         }
@@ -120,16 +120,33 @@ public class ItemActivity extends AppCompatActivity {
 
     public void save(View view) {
         try {
+            String name = nameText.getText().toString();
+            String price = priceText.getText().toString();
+            String path = "";
+            if (bitmap != null) {
+                path = saveBitmap(compressBitmap(bitmap));
+            } else {
+                if (fruit != null) {
+                    path = fruit.getImg();
+                }
+            }
+            if ("".equals(name) || "".equals(price) || "".equals(path)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                AlertDialog alert = builder.setTitle("错误")
+                        .setMessage("商品名、价格、商品图片都不可为空")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+//                            Toast.makeText(mContext, "你点击了取消按钮~", Toast.LENGTH_SHORT).show();
+                            }
+                        }).create();             //创建AlertDialog对象
+                alert.show();                    //显示对话框
+                return;
+            }
             SQLiteDatabase db = myDBHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put("name", name.getText().toString());
-            values.put("price", price.getText().toString());
-            String path="";
-            if(bitmap!=null){
-                path = saveBitmap(compressBitmap(bitmap));
-            }else{
-                path=fruit.getImg();
-            }
+            values.put("name", name);
+            values.put("price", price);
             values.put("img", path);
             if (id == 0) {
                 db.insert("fruits", null, values);
